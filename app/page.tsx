@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Background from "@/components/Background";
-
 import { Results } from "@/components/results";
 import { UploadedImagesProvider } from "@/components/uploaded-images-provider";
 
@@ -30,7 +28,6 @@ const ImagesSkeleton = () => (
 
 const Home = () => (
   <div className="relative min-h-screen rounded-[24px]">
-    <Background />
     <div className="relative z-10">
       <UploadedImagesProvider>
 
