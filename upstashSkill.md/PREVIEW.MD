@@ -8,7 +8,7 @@ type PreviewProps = {
 export const Preview = ({ url, priority }: PreviewProps) => (
   <div className="mb-4 rounded-xl bg-card p-2 shadow-xl">
     <Image
-      alt={url ?? "An image from the gallery"}
+      alt={url}
       className="rounded-md"
       height={630}
       priority={priority}

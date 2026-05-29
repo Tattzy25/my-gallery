@@ -47,7 +47,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   return (
     <>
       {hasImages ? (
-        <div className="columns-2 gap-4 sm:columns-3 md:columns-4">
+        <div className="gap-4 sm:columns-2 md:columns-3 lg:columns-2 xl:columns-3">
           {images.map((image, index) => (
             <Preview
               key={image.url}
@@ -56,24 +56,20 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
             />
           ))}
           {"data" in state && state.data?.length
-            ? state.data
-                .filter((blob) => blob.url)
-                .map((blob, index) => (
-                  <Preview
-                    key={blob.url}
-                    priority={index < PRIORITY_COUNT}
-                    url={blob.url}
-                  />
-                ))
-            : defaultData
-                .filter((blob) => blob.downloadUrl)
-                .map((blob, index) => (
-                  <Preview
-                    key={blob.url}
-                    priority={index < PRIORITY_COUNT}
-                    url={blob.downloadUrl}
-                  />
-                ))}
+            ? state.data.map((blob, index) => (
+                <Preview
+                  key={blob.url}
+                  priority={index < PRIORITY_COUNT}
+                  url={blob.url}
+                />
+              ))
+            : defaultData.map((blob, index) => (
+                <Preview
+                  key={blob.url}
+                  priority={index < PRIORITY_COUNT}
+                  url={blob.downloadUrl}
+                />
+              ))}
         </div>
       ) : (
         <Empty className="h-full min-h-[50vh] rounded-lg border">
@@ -101,7 +97,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
 
       <form
         action={formAction}
-        className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg"
+        className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg lg:ml-[182px]"
       >
         {"data" in state && state.data.length > 0 && (
           <Button
@@ -128,7 +124,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
             <Loader2Icon className="size-4 animate-spin" />
           </Button>
         ) : (
-          null
+          <UploadButton />
         )}
       </form>
     </>

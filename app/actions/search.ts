@@ -6,7 +6,7 @@ import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
 
 const upstash = Search.fromEnv();
-const index = upstash.index("images");
+const index = upstash.index("gallery");
 
 type SearchResponse =
   | {
@@ -18,7 +18,7 @@ type SearchResponse =
 
 export const search = async (
   _prevState: SearchResponse | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<SearchResponse> => {
   const query = formData.get("search");
 

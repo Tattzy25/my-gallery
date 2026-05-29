@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Background from "@/components/Background";
-import { CustomHHeader } from "@/components/CustomHHeader";
+
 import { Results } from "@/components/results";
 import { UploadedImagesProvider } from "@/components/uploaded-images-provider";
 
@@ -33,26 +33,7 @@ const Home = () => (
     <Background />
     <div className="relative z-10">
       <UploadedImagesProvider>
-        <CustomHHeader
-          items={[
-            { label: "Inspirations", href: "/inspirations" },
-            { label: "My Gallery", href: "/my-gallery" },
-          ]}
-          glassProps={{
-            width: "min(600px, calc(100vw - 1rem))",
-            height: 64,
-            borderRadius: 20,
-            className: "my-custom-class",
-            displace: 0.5,
-            distortionScale: -180,
-            redOffset: 0,
-            greenOffset: 10,
-            blueOffset: 20,
-            brightness: 50,
-            opacity: 0.93,
-            mixBlendMode: "screen",
-          }}
-        />
+
         <div className="relative w-full py-8">
           <Suspense fallback={<ImagesSkeleton />}>
             <Results />
