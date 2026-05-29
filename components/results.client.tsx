@@ -1,6 +1,5 @@
 "use client";
 
-import type { ListBlobResult } from "@vercel/blob";
 import {
   ArrowLeftIcon,
   FileIcon,
@@ -18,14 +17,15 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "./ui/empty";
 import { Input } from "./ui/input";
 import { UploadButton } from "./upload-button";
 import { useUploadedImages } from "./uploaded-images-provider";
+import type { GalleryItem } from "./results";
 
 type ResultsClientProps = {
-  defaultData: ListBlobResult["blobs"];
+  initialData: GalleryItem[];
 };
 
 const PRIORITY_COUNT = 12;
 
-export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
+export const ResultsClient = ({ initialData }: ResultsClientProps) => {
   const { images } = useUploadedImages();
   const [state, formAction, isPending] = useActionState(search, { data: [] });
 
@@ -39,10 +39,11 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
     window.location.reload();
   };
 
-  const hasImages =
-    images.length ||
-    defaultData.length ||
-    ("data" in state && state.data?.length);
+  const isSearching = "data" in state && state.data !== undefined;
+  const displayData =
+    isSearching && state.data.length > 0 ? state.data : initialData;
+
+  const hasImages = images.length || displayData.length;
 
   return (
     <>
@@ -55,25 +56,13 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
               url={image.url}
             />
           ))}
-          {"data" in state && state.data?.length
-            ? state.data
-                .filter((blob) => blob.url)
-                .map((blob, index) => (
-                  <Preview
-                    key={blob.url}
-                    priority={index < PRIORITY_COUNT}
-                    url={blob.url}
-                  />
-                ))
-            : defaultData
-                .filter((blob) => blob.downloadUrl)
-                .map((blob, index) => (
-                  <Preview
-                    key={blob.url}
-                    priority={index < PRIORITY_COUNT}
-                    url={blob.downloadUrl}
-                  />
-                ))}
+          {displayData.map((item, index) => (
+            <Preview
+              key={item.url}
+              priority={index < PRIORITY_COUNT}
+              url={item.url}
+            />
+          ))}
         </div>
       ) : (
         <Empty className="h-full min-h-[50vh] rounded-lg border">
@@ -103,7 +92,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
         action={formAction}
         className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg"
       >
-        {"data" in state && state.data.length > 0 && (
+        {isSearching && state.data.length > 0 && (
           <Button
             className="shrink-0 rounded-full"
             disabled={isPending}
@@ -128,7 +117,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
             <Loader2Icon className="size-4 animate-spin" />
           </Button>
         ) : (
-          null
+          <UploadButton />
         )}
       </form>
     </>

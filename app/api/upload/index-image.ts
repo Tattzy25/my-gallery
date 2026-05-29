@@ -1,57 +1,85 @@
 /** biome-ignore-all lint/suspicious/noConsole: "Handy for debugging" */
 
 import { Search } from "@upstash/search";
-import type { PutBlobResult } from "@vercel/blob";
 import { FatalError, getStepMetadata, RetryableError } from "workflow";
 
 const upstash = Search.fromEnv();
 const index = upstash.index("gallery");
 
-export const indexImage = async (blob: PutBlobResult, text: string) => {
+// Your data shape — no Vercel Blob needed
+type TattooProduct = {
+  imageId: string;
+  imageUrl: string;
+  title: string;
+  tags: string;
+  shortDescription: string;
+  dimensions: string;
+  imageAltText: string;
+  mood: string;
+  style: string;
+  colorScheme: string;
+  vendor?: string;
+  prompt: string;
+  seoTitle: string;
+  seoDescription: string;
+  body: string;
+  urlHandle?: string;
+  productCategory?: string;
+  type?: string;
+  published?: string;
+  status?: string;
+  price?: string;
+};
+
+export const indexImage = async (product: TattooProduct) => {
   "use step";
 
   const { attempt, stepStartedAt, stepId } = getStepMetadata();
 
   console.log(
     `[${stepId}] Indexing image (attempt ${attempt})...`,
-    blob.downloadUrl
+    product.imageUrl,
   );
 
   try {
-    // 1. Upsert your cleaned structure 
-    await index.upsert([ 
-      { 
-        id: "gallery", // as requested 
-        content: { 
-          "image_name": "", 
-          "image_url": "", 
-          "Title": "", 
-          "Tags": "", 
-          "Short Description": "", 
-          "Dimensions": "", 
-          "Image Alt Text": "", 
-          "Mood": "", 
-          "Style": "", 
-          "Color Scheme": "" 
-        }, 
-        metadata: { 
-          "Sku": "", 
-          "Prompt": "", 
-          "SEO Title": "", 
-          "SEO Description": "", 
-          "Body": "" 
-        } 
-      } 
+    await index.upsert([
+      {
+        id: product.imageId, // UNIQUE per image — not "gallery"
+        content: {
+          image_name: product.title,
+          image_url: product.imageUrl,
+          Title: product.title,
+          Tags: product.tags,
+          "Short Description": product.shortDescription,
+          Dimensions: product.dimensions,
+          "Image Alt Text": product.imageAltText,
+          Mood: product.mood,
+          Style: product.style,
+          "Color Scheme": product.colorScheme,
+          Vendor: product.vendor || "TaTTTy",
+        },
+        metadata: {
+          Sku: product.imageId,
+          Prompt: product.prompt,
+          "SEO Title": product.seoTitle,
+          "SEO Description": product.seoDescription,
+          Body: product.body,
+          "URL handle": product.urlHandle || "",
+          "Product category": product.productCategory || "",
+          Type: product.type || "",
+          "Published on online store": product.published || "",
+          Status: product.status || "",
+          Price: product.price || "",
+        },
+      },
     ]);
 
     console.log(
-      `[${stepId}] Successfully indexed image at ${stepStartedAt.toISOString()}`
+      `[${stepId}] Successfully indexed image at ${stepStartedAt.toISOString()}`,
     );
-
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
-    // Check for rate limiting
     if (
       message.includes("rate limit") ||
       message.includes("429") ||
@@ -62,7 +90,6 @@ export const indexImage = async (blob: PutBlobResult, text: string) => {
       });
     }
 
-    // Check for network/connection errors
     if (
       message.includes("timeout") ||
       message.includes("network") ||

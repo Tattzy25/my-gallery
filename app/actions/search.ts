@@ -1,20 +1,13 @@
-/** biome-ignore-all lint/suspicious/noConsole: "Handy for debugging" */
-
 "use server";
 
 import { Search } from "@upstash/search";
-import type { PutBlobResult } from "@vercel/blob";
 
 const upstash = Search.fromEnv();
 const index = upstash.index("gallery");
 
-type SearchResponse =
-  | {
-      data: PutBlobResult[];
-    }
-  | {
-      error: string;
-    };
+const FALLBACK_URL = "https://tattty-uploads.tattty.com/TATTTYLOGO.png";
+
+type SearchResponse = { data: any[] } | { error: string };
 
 export const search = async (
   _prevState: SearchResponse | undefined,
@@ -27,20 +20,27 @@ export const search = async (
   }
 
   try {
-    console.log("Searching index for query:", query);
-    const results = await index.search({ query });
+    const results = await index.search({ query, limit: 50 });
 
-    console.log("Results:", results);
-    const data = results
-      .sort((a, b) => b.score - a.score)
-      .map((result) => result.metadata)
-      .filter(Boolean) as unknown as PutBlobResult[];
+    const data = results.map((result: any) => ({
+      id: result.id,
+      url: result.content?.image_url || FALLBACK_URL,
+      title: result.content?.Title || "",
+      tags: result.content?.Tags || "",
+      shortDescription: result.content?.["Short Description"] || "",
+      mood: result.content?.Mood || "",
+      style: result.content?.Style || "",
+      colorScheme: result.content?.["Color Scheme"] || "",
+      sku: result.metadata?.Sku || "",
+      prompt: result.metadata?.Prompt || "",
+      seoTitle: result.metadata?.["SEO Title"] || "",
+      seoDescription: result.metadata?.["SEO Description"] || "",
+      body: result.metadata?.Body || "",
+    }));
 
-    console.log("Images found:", data);
     return { data };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-
     return { error: message };
   }
 };
