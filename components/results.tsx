@@ -19,7 +19,7 @@ export type GalleryItem = {
 
 async function fetchInitialImages(): Promise<GalleryItem[]> {
   const upstash = Search.fromEnv();
-  const index = upstash.index("gallery");
+  const index = upstash.index("gen");
 
   const { documents } = await index.range({
     cursor: "0",

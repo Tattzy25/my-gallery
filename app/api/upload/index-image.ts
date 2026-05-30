@@ -1,7 +1,7 @@
 import { Search } from "@upstash/search";
 
 const upstash = Search.fromEnv();
-const index = upstash.index("gallery");
+const index = upstash.index("gen");
 
 type TattooProduct = {
   imageId: string;

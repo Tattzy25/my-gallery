@@ -3,7 +3,7 @@
 import { Search } from "@upstash/search";
 
 const upstash = Search.fromEnv();
-const index = upstash.index("gallery");
+const index = upstash.index("gen");
 
 const FALLBACK_URL = "https://tattty-uploads.tattty.com/TATTTYLOGO.png";
 
