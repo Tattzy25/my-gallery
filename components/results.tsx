@@ -26,9 +26,12 @@ async function fetchInitialImages(): Promise<GalleryItem[]> {
     limit: 50,
   });
 
+  const findUrl = (content: any) =>
+    content ? Object.values(content).find((v: any) => typeof v === "string" && v.startsWith("http")) as string | undefined : undefined;
+
   return documents.map((doc: any) => ({
     id: doc.id,
-    url: doc.content?.image_url,
+    url: findUrl(doc.content),
     title: doc.content?.Title || "",
     tags: doc.content?.Tags || "",
     shortDescription: doc.content?.["Short Description"] || "",

@@ -20,9 +20,12 @@ export const search = async (
   try {
     const results = await index.search({ query, limit: 50 });
 
+    const findUrl = (content: any) =>
+      content ? Object.values(content).find((v: any) => typeof v === "string" && v.startsWith("http")) as string | undefined : undefined;
+
     const data = results.map((result: any) => ({
       id: result.id,
-      url: result.content?.image_url,
+      url: findUrl(result.content),
       title: result.content?.Title || "",
       tags: result.content?.Tags || "",
       shortDescription: result.content?.["Short Description"] || "",
