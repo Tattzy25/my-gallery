@@ -28,7 +28,7 @@ async function fetchInitialImages(): Promise<GalleryItem[]> {
 
   return documents.map((doc: any) => ({
     id: doc.id,
-    url: doc.content?.image_url || "",
+    url: doc.content?.image_url,
     title: doc.content?.Title || "",
     tags: doc.content?.Tags || "",
     shortDescription: doc.content?.["Short Description"] || "",

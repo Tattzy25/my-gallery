@@ -5,8 +5,6 @@ import { Search } from "@upstash/search";
 const upstash = Search.fromEnv();
 const index = upstash.index("gen");
 
-const FALLBACK_URL = "https://tattty-uploads.tattty.com/TATTTYLOGO.png";
-
 type SearchResponse = { data: any[] } | { error: string };
 
 export const search = async (
@@ -24,7 +22,7 @@ export const search = async (
 
     const data = results.map((result: any) => ({
       id: result.id,
-      url: result.content?.image_url || FALLBACK_URL,
+      url: result.content?.image_url,
       title: result.content?.Title || "",
       tags: result.content?.Tags || "",
       shortDescription: result.content?.["Short Description"] || "",
