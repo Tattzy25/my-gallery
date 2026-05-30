@@ -1,44 +1,38 @@
+// app/actions/search.ts
 "use server";
 
-import { Search } from "@upstash/search";
+import { imageIndex } from "@/lib/search";
 
-const upstash = Search.fromEnv();
-const index = upstash.index("fuck-claude");
+type ImageItem = { id: string; url: string; style?: string };
 
-type SearchItem = {
-  id: string;
-  url: string;
-  style: string;
-};
+type State = { data: ImageItem[] } | { error: string };
 
-type SearchResponse = { data: SearchItem[] } | { error: string };
-
-export const search = async (
-  _prevState: SearchResponse | undefined,
+export async function search(
+  _prevState: State,
   formData: FormData,
-): Promise<SearchResponse> => {
+): Promise<State> {
   const query = formData.get("search");
-
   if (!query || typeof query !== "string") {
-    return { error: "Please enter a search query" };
+    return { error: "Missing search query" };
   }
 
   try {
-    const results = await index.search({ query, limit: 50 });
+    // One Upstash Search call per search submit
+    const docs: any[] = await imageIndex.search({
+      query,
+      limit: 50,
+    });
 
-    return {
-      data: results.map((result: any) => ({
-        id: result.id,
-        url:
-          typeof result.content?.image_url === "string"
-            ? result.content.image_url
-            : "",
-        style:
-          typeof result.content?.style === "string" ? result.content.style : "",
-      })),
-    };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return { error: message };
+    const data: ImageItem[] = docs
+      .map((doc) => ({
+        id: String(doc.id),
+        url: String(doc.content?.image_url ?? ""),
+        style: doc.content?.style ? String(doc.content.style) : undefined,
+      }))
+      .filter((d) => d.url.trim().length > 0);
+
+    return { data };
+  } catch {
+    return { error: "Search failed" };
   }
-};
+}
