@@ -7,11 +7,17 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "tattty-uploads.tattty.com",
+        port: "",
+        pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "*.pix.tattty.com",
+        hostname: "pix.tattty.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
 };
+
+export default nextConfig;

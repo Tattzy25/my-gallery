@@ -5,7 +5,13 @@ import { Search } from "@upstash/search";
 const upstash = Search.fromEnv();
 const index = upstash.index("fuck-claude");
 
-type SearchResponse = { data: any[] } | { error: string };
+type SearchItem = {
+  id: string;
+  url: string;
+  style: string;
+};
+
+type SearchResponse = { data: SearchItem[] } | { error: string };
 
 export const search = async (
   _prevState: SearchResponse | undefined,
@@ -20,23 +26,17 @@ export const search = async (
   try {
     const results = await index.search({ query, limit: 50 });
 
-    const data = results.map((result: any) => ({
-      id: result.id,
-      url: result.content?.image_url || "",
-      title: result.content?.Title || "",
-      tags: result.content?.Tags || "",
-      shortDescription: result.content?.["Short Description"] || "",
-      mood: result.content?.Mood || "",
-      style: result.content?.Style || "",
-      colorScheme: result.content?.["Color Scheme"] || "",
-      sku: result.metadata?.Sku || "",
-      prompt: result.metadata?.Prompt || "",
-      seoTitle: result.metadata?.["SEO Title"] || "",
-      seoDescription: result.metadata?.["SEO Description"] || "",
-      body: result.metadata?.Body || "",
-    }));
-
-    return { data };
+    return {
+      data: results.map((result: any) => ({
+        id: result.id,
+        url:
+          typeof result.content?.image_url === "string"
+            ? result.content.image_url
+            : "",
+        style:
+          typeof result.content?.style === "string" ? result.content.style : "",
+      })),
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return { error: message };
