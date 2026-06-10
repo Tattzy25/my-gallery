@@ -57,7 +57,7 @@ export function ResultsClient({ initialData }: Props) {
             </div>
             <EmptyTitle>No images found</EmptyTitle>
             <EmptyDescription>
-              Upload images to your Cloudflare bucket and index them in Upstash.
+              UYour generated images will go here, Start Generating Now
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
