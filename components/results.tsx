@@ -1,4 +1,3 @@
-// components/results.tsx
 import { imageIndex } from "@/lib/search";
 import { ResultsClient } from "./results.client";
 

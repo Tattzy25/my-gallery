@@ -75,7 +75,7 @@ body:
       placeholder: e.g., 3, 5, or "didn't retry"
 
   - type: textarea
-    id: image-details
+    id: TaTTTy-details
     attributes:
       label: Image Details
       description: Provide details about the image(s) that caused the issue
