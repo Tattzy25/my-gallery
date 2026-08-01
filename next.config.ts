@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    formats: ["image/png", "image/webp"], // Note: Next.js only officially supports 'image/avif' and 'image/webp' here. If you get an error, you may need to remove 'image/png'.
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
