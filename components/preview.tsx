@@ -17,11 +17,11 @@ export function Preview({ url, priority }: PreviewProps) {
       <Image
         alt={url}
         className="rounded-md"
-        height={630}
+        height={300}
         priority={priority}
-        sizes="630px"
+        sizes="300px"
         src={url}
-        width={630}
+        width={300}
       />
     </div>
   );
