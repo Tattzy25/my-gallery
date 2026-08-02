@@ -22,14 +22,30 @@ const ImagesSkeleton = () => (
   </div>
 );
 
-const Home = () => (
-  <div className="relative min-h-screen rounded-[24px]">
-    <div className="relative w-full py-8">
-      <Suspense fallback={<ImagesSkeleton />}>
-        <Results />
-      </Suspense>
+type HomeProps = {
+  searchParams: Promise<{ customerId?: string }>;
+};
+
+const Home = async ({ searchParams }: HomeProps) => {
+  const { customerId } = await searchParams;
+
+  if (!customerId) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Please Sign In
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative min-h-screen rounded-[24px]">
+      <div className="relative w-full py-8">
+        <Suspense fallback={<ImagesSkeleton />}>
+          <Results customerId={customerId} />
+        </Suspense>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Home;

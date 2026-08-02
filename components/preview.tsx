@@ -47,7 +47,10 @@ export function Preview({ url, priority, onOpenLightbox }: PreviewProps) {
   };
 
   return (
-    <div className="group relative rounded-xl overflow-hidden shadow-md transition-all hover:shadow-xl cursor-pointer">
+    <div
+      className="group relative rounded-xl overflow-hidden shadow-md transition-all hover:shadow-xl cursor-pointer"
+      onClick={onOpenLightbox}
+    >
       <AspectRatio ratio={1 / 1}>
         <Image
           alt={url}
@@ -56,7 +59,6 @@ export function Preview({ url, priority, onOpenLightbox }: PreviewProps) {
           priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           src={url}
-          onClick={onOpenLightbox}
         />
         <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none sm:pointer-events-auto">
           <button

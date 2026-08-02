@@ -1,11 +1,12 @@
-import { imageIndex } from "@/lib/search";
+import { searchClient } from "@/lib/search";
 import { ResultsClient } from "./results.client";
 
 export type ImageItem = { id: string; url: string; style?: string };
 
-async function fetchInitial(): Promise<ImageItem[]> {
-  // One Upstash Search call every time the page is opened
-  const res: any = await imageIndex.range({
+async function fetchInitial(customerId: string): Promise<ImageItem[]> {
+  const index = searchClient.index(`customer-${customerId}`);
+
+  const res: any = await index.range({
     cursor: "0",
     limit: 50,
   });
@@ -19,7 +20,7 @@ async function fetchInitial(): Promise<ImageItem[]> {
     .filter((d) => d.url.trim().length > 0);
 }
 
-export const Results = async () => {
-  const initialData = await fetchInitial();
+export const Results = async ({ customerId }: { customerId: string }) => {
+  const initialData = await fetchInitial(customerId);
   return <ResultsClient initialData={initialData} />;
 };

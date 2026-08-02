@@ -1,7 +1,7 @@
 // app/actions/search.ts
 "use server";
 
-import { imageIndex } from "@/lib/search";
+import { searchClient } from "@/lib/search";
 
 type ImageItem = { id: string; url: string; style?: string };
 
@@ -17,7 +17,7 @@ export async function search(
   }
 
   // One Upstash Search call per search submit
-  const docs: any[] = await imageIndex.search({
+  const docs: any[] = await searchClient.index("78552369825").search({
     query,
     limit: 50,
   });
