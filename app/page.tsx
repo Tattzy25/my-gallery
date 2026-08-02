@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Results } from "@/components/results";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "gallery.tattty.com",
@@ -31,8 +32,10 @@ const Home = async ({ searchParams }: HomeProps) => {
 
   if (!customerId) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
-        Please Sign In
+      <div className="flex min-h-screen items-center justify-center">
+        <Button asChild size="lg">
+          <a href="https://account.tattty.com/">Sign In</a>
+        </Button>
       </div>
     );
   }
